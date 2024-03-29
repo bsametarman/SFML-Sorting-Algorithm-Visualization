@@ -50,6 +50,68 @@ void selectionSort(std::vector<sf::RectangleShape>& rectangles){
     } 
 }
 
+void insertionSort(std::vector<sf::RectangleShape>& rectangles){
+    for(size_t i = 1; i < rectangles.size(); i++){
+        sf::RectangleShape key = rectangles[i];
+        int j = i - 1;
+        while(j >= 0 && rectangles[j].getSize().y > key.getSize().y){
+            rectangles[j].setFillColor(sf::Color::Yellow);
+            rectangles[j + 1] = rectangles[j];
+            j--;
+            break;
+        }
+        rectangles[j + 1] = key;
+    }
+}
+
+void merge(std::vector<sf::RectangleShape>& rectangles, int left, int mid, int right){
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    std::vector<sf::RectangleShape> leftArray, rightArray;
+
+    for(int i = 0; i < n1; i++)
+        leftArray.push_back(rectangles[left + i]);
+    for(int j = 0; j < n2; j++)
+        rightArray.push_back(rectangles[mid + 1 + j]);
+
+    int i = 0, j = 0, k = left;
+
+    while(i < n1 && j < n2){
+        if(leftArray[i].getSize().y <= rightArray[j].getSize().y){
+            rectangles[k] = leftArray[i];
+            i++;
+        }
+        else{
+            rectangles[k] = rightArray[j];
+            j++;
+        }
+        k++;
+    }
+
+    while(i < n1){
+        rectangles[k] = leftArray[i];
+        i++;
+        k++;
+    }
+
+    while(j < n2){
+        rectangles[k] = rightArray[j];
+        j++;
+        k++;
+    }
+}
+
+void mergeSort(std::vector<sf::RectangleShape>& rectangles, int left, int right){
+    if(left >= right){
+        return;
+    }
+    int mid = left + (right - left) / 2;
+    mergeSort(rectangles, left, mid);
+    mergeSort(rectangles, mid + 1, right);
+    merge(rectangles, left, mid, right);
+}
+
 void setColorToWhite(std::vector<sf::RectangleShape>& rectangles){
     for(auto& rectangle : rectangles)
         rectangle.setFillColor(sf::Color::White);
@@ -78,8 +140,10 @@ int main()
         // draw everything here...
         // window.draw(...);
 
-        bubbleSort(rectangles);
-        //selectionSort(rectangles);
+        //bubbleSort(rectangles);
+        selectionSort(rectangles);
+        //insertionSort(rectangles);
+        //mergeSort(rectangles, 0, rectangles.size() - 1); // sorting instantly, workin on it
 
         for (size_t i = 0; i < rectangles.size(); i++) {
             rectangles[i].setPosition(i * 10 + 5, 600 - rectangles[i].getSize().y);
